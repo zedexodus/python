@@ -6,19 +6,23 @@ import tarfile, os, sys, logging, datetime, re
 # YearMonthDay
 date_stamp = datetime.date.today().strftime("%Y%m%d")
 
-# Set the file name of the archive using the time_stamp
-file = "%s.tar.bz2" % date_stamp
+# Set directory to back up
+
+script, directory = sys.argv
+
+# Set the filename name of the archive using the time_stamp
+filename = "%s-%s.tar.bz2" % (sys.argv[1], date_stamp)
 
 # Set the logging level
 logging.basicConfig(filename='archive.log', level = logging.DEBUG)
 
-# Send string to log file.
-logging.info("Checking to see if " + file + " exists")
+# Send string to log filename.
+logging.info("Checking to see if " + filename + " exists")
 
-# If the file exists run this.
-if os.path.exists(file):
+# If the filename exists run this.
+if os.path.exists(filename):
     logging.info("File already exists.")
-    logging.info("Attempting add files to exisiting archive.")
+    logging.info("Attempting add filenames to exisiting archive.")
 
     confirmation = str(raw_input("Do you wish to overwrite the existing archive? "))
     checkconfirmation = re.match(r'^y', str(confirmation), re.I)
@@ -26,10 +30,10 @@ if os.path.exists(file):
     if checkconfirmation:
         print "yes"
         try:
-            tar_file = tarfile.open(name=file, mode='w:bz2')
+            tar_file = tarfile.open(name=filename, mode='w:bz2')
         except:
             err = sys.exc_info()
-            logging.error("Unable to open " + file +  " for adding of additional files.")
+            logging.error("Unable to open " + filename +  " for adding of additional files.")
             logging.error("Error Number: " + str(err[1].args[0]))
             logging.error("Error Message: " + err[1].args[1])
             sys.exit()
@@ -39,17 +43,17 @@ if os.path.exists(file):
         sys.exit()
 
 else:
-    logging.info("Creating " + file)
+    logging.info("Creating " + filename)
     try:
-        tar_file = tarfile.open(name=file, mode='w:bz2')
+        tar_file = tarfile.open(name=filename, mode='w:bz2')
     except:
         err = sys.exc_info()
-        logging.error("Unable to create " + file)
+        logging.error("Unable to create " + filename)
         logging.error("Error Number: " + str(err[1].args[0]))
         logging.error("Error Message: " + err[1].args[1])
         sys.exit()
 
-logging.info("Adding files to " + file)
+logging.info("Adding files to " + filename)
 
 try:
     tar_file.add('.')
